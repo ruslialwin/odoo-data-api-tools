@@ -1,0 +1,10 @@
+services:
+  api-cleaning-tools:
+    image: api-cleaning-tools:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-cleaning-tools
+    ports:
+      - "8502:5000"
+    restart: unless-stopped
