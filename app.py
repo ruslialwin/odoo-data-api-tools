@@ -7,34 +7,39 @@ app = Flask(__name__)
 
 COMPANIES = {
     "bimp": {
-        "realisasi": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-bimp",
-        "analitik": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-akun-analitik-bimp",
-        "processing": "https://dashboard.mahkotagroup.com/api/dashboard/processing-labour-bimp",
-        "production": "https://dashboard.mahkotagroup.com/api/dashboard/production-bimp"
+        "realisasi": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-dan-rugi-bimp-20250701-20251231",
+        "realisasi-harian": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-rugi-harian-bimp-20250701-20251231",
+        "analitik": "https://dashboard.mahkotagroup.com/api/powerbi-feed/realisasi-bimp-20250701-20251231",
+        "processing": "https://dashboard.mahkotagroup.com/api/powerbi-feed/processing-labour-bimp-20250701-20251231",
+        "production": "https://dashboard.mahkotagroup.com/api/powerbi-feed/produksi-harian-bimp-20250701-20261231"
     },
     "bimr": {
-        "realisasi": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-bimr",
-        "analitik": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-akun-analitik-bimr",
-        "processing": "https://dashboard.mahkotagroup.com/api/dashboard/processing-labour-bimr",
-        "production": "https://dashboard.mahkotagroup.com/api/dashboard/production-bimr"
+        "realisasi": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-dan-rugi-bimr-20250701-20251231",
+        "realisasi-harian": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-rugi-harian-bimr-20250701-20251231",
+        "analitik": "https://dashboard.mahkotagroup.com/api/powerbi-feed/realisasi-bimr-20250701-20251231",
+        "processing": "https://dashboard.mahkotagroup.com/api/powerbi-feed/processing-labour-bimr-20250701-20251231",
+        "production": "https://dashboard.mahkotagroup.com/api/powerbi-feed/produksi-harian-bimr-20250701-20261231"
     },
     "bims": {
-        "realisasi": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-bims",
-        "analitik": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-akun-analitik-bims",
-        "processing": "https://dashboard.mahkotagroup.com/api/dashboard/processing-labour-bims",
-        "production": "https://dashboard.mahkotagroup.com/api/dashboard/production-bims"
+        "realisasi": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-dan-rugi-bims-20250701-20250930",
+        "realisasi-harian": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-rugi-harian-bims-20250701-20250930",
+        "analitik": "https://dashboard.mahkotagroup.com/api/powerbi-feed/realisasi-bims-20250701-20250930",
+        "processing": "https://dashboard.mahkotagroup.com/api/powerbi-feed/processing-labour-bims-20250701-20250930",
+        "production": "https://dashboard.mahkotagroup.com/api/powerbi-feed/produksi-harian-bims-20250701-20261231"
     },
     "mul": {
-        "realisasi": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-mul",
-        "analitik": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-akun-analitik-mul",
-        "processing": "https://dashboard.mahkotagroup.com/api/dashboard/processing-labour-mul",
-        "production": "https://dashboard.mahkotagroup.com/api/dashboard/production-mul"
+        "realisasi": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-dan-rugi-mul-20250701-20251231",
+        "realisasi-harian": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-rugi-harian-mul-20250701-20251231",
+        "analitik": "https://dashboard.mahkotagroup.com/api/powerbi-feed/realisasi-mul-20250701-20251231",
+        "processing": "https://dashboard.mahkotagroup.com/api/powerbi-feed/processing-labour-mul-20250701-20251231",
+        "production": "https://dashboard.mahkotagroup.com/api/powerbi-feed/produksi-harian-mul-20250701-20261231"
     },
     "kpnj": {
-        "realisasi": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-kpnj",
-        "analitik": "https://dashboard.mahkotagroup.com/api/dashboard/realisasi-akun-analitik-kpnj",
-        "processing": "https://dashboard.mahkotagroup.com/api/dashboard/processing-labour-kpnj",
-        "production": "https://dashboard.mahkotagroup.com/api/dashboard/production-kpnj"
+        "realisasi": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-dan-rugi-kpnj-20250701-20251231",
+        "realisasi-harian": "https://dashboard.mahkotagroup.com/api/powerbi-feed/laba-rugi-harian-kpnj-20250701-20251231",
+        "analitik": "https://dashboard.mahkotagroup.com/api/powerbi-feed/realisasi-kpnj-20250701-20251231",
+        "processing": "https://dashboard.mahkotagroup.com/api/powerbi-feed/processing-labour-kpnj-20250701-20251231",
+        "production": "https://dashboard.mahkotagroup.com/api/powerbi-feed/produksi-harian-kpnj-20250701-20261231"
     }
 }
 
@@ -58,7 +63,32 @@ def get_data_realisasi(company):
 
     # Susun kolom akhir
     final_cols = [
-        "Tahun", "Bulan", "Overview", "Deskripsi", "No. Akun", "Rincian Deskripsi", "Realisasi Biaya"
+        "Tahun", "Bulan", "Overview", "Deskripsi", "No Akun", "Rincian Deskripsi", "Realisasi Biaya"
+    ]
+
+    df = df[final_cols].copy()
+    records = df.to_dict(orient="records")
+
+    return Response(
+        json.dumps(records, ensure_ascii=False),
+        mimetype="application/json"
+    )
+    
+@app.route("/realisasi-harian/<company>")
+def get_data_realisasi_harian(company):
+
+    df = get_dataframe(COMPANIES[company]["realisasi-harian"])
+
+    # Balik tanda nominal untuk Pendapatan dan Pendapatan Lain-lain
+    mask_pendapatan = df["Deskripsi"].isin(["Pendapatan", "Pendapatan Lain-lain"])
+    df.loc[mask_pendapatan, "Realisasi Biaya"] = df.loc[mask_pendapatan, "Realisasi Biaya"] * -1
+
+    # Bulatkan nilai 2 angka di belakang koma
+    df["Realisasi Biaya"] = df["Realisasi Biaya"].round(2)
+
+    # Susun kolom akhir
+    final_cols = [
+        "Tanggal","Tahun", "Bulan", "Overview", "Deskripsi", "No Akun", "Rincian Deskripsi", "Realisasi Biaya"
     ]
 
     df = df[final_cols].copy()
@@ -108,7 +138,7 @@ def get_data_processing_labour(company):
 
     # Susun kolom akhir
     final_cols = [
-        "Tahun", "Bulan", "Overview", "Deskripsi", "Tipe", "No. Akun", "Rincian Deskripsi", "Realisasi Biaya"
+        "Tahun", "Bulan", "Overview", "Deskripsi", "Tipe", "No Akun", "Rincian Deskripsi", "Realisasi Biaya"
     ]
 
     df = df[final_cols].copy()
