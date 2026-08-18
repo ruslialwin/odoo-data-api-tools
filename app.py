@@ -49,6 +49,26 @@ def get_dataframe(url):
     result = response.json()
     return pd.DataFrame(result["data"])
 
+REPORT_NAMES = {
+    "realisasi": "Laba dan Rugi",
+    "realisasi-harian": "Laba Rugi Harian",
+    "analitik": "Realisasi Akun Analitik",
+    "processing": "Processing Labour",
+    "production": "Production"
+}
+
+def get_api_result(url):
+    response = requests.get(url, timeout=60)
+    response.raise_for_status()
+
+    return response.json()
+
+
+def get_dataframe(url):
+    result = get_api_result(url)
+
+    return pd.DataFrame(result.get("data", [])) 
+
 @app.route("/realisasi/<company>")
 def get_data_realisasi(company):
 
@@ -176,6 +196,58 @@ def get_data_production(company):
         json.dumps(records, ensure_ascii=False),
         mimetype="application/json"
     )
+
+@app.route("/totals/<report>/<company>")
+def get_totals(report, company):
+
+    # Validasi perusahaan
+    if company not in COMPANIES:
+        return Response(
+            json.dumps({
+                "error": f"Company '{company}' tidak ditemukan"
+            }),
+            status=404,
+            mimetype="application/json"
+        )
+
+    # Validasi report
+    if report not in COMPANIES[company]:
+        return Response(
+            json.dumps({
+                "error": f"Report '{report}' tidak ditemukan"
+            }),
+            status=404,
+            mimetype="application/json"
+        )
+
+    url = COMPANIES[company][report]
+
+    try:
+        result = get_api_result(url)
+
+        response = {
+            "company": company,
+            "report": report,
+            "reportName": REPORT_NAMES.get(report, report),
+            "total": result.get("total"),
+            "sourceTotal": result.get("sourceTotal"),
+            "finalTotal": result.get("finalTotal")
+        }
+
+        return Response(
+            json.dumps(response, ensure_ascii=False),
+            mimetype="application/json"
+        )
+
+    except requests.RequestException as e:
+        return Response(
+            json.dumps({
+                "error": "Gagal mengakses API",
+                "detail": str(e)
+            }),
+            status=502,
+            mimetype="application/json"
+        )
 
 if __name__ == "__main__":
     app.run(debug=True)
