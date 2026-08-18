@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Odoo Data API Tools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>
+            Odoo Data API Tools
+        </h1>
+
+        <p>
+            Monitoring sourceTotal, finalTotal,
+            dan data untuk Power BI
+        </p>
+    </div>
+
+    <!-- FILTER -->
+    <div class="card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>
+                    Perusahaan
+                </label>
+
+                <select id="company">
+                    {% for code, company in companies.items() %}
+
+                    <option value="{{ code }}">
+                        {{ company.name }}
+                    </option>
+
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Jenis Data
+                </label>
+
+                <select id="report">
+                    {% for code, report in reports.items() %}
+
+                    <option value="{{ code }}">
+                        {{ report.name }}
+                    </option>
+
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Tanggal Mulai
+                </label>
+
+                <input
+                    type="date"
+                    id="startDate"
+                    value="2025-07-01"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Tanggal Akhir
+                </label>
+
+                <input
+                    type="date"
+                    id="endDate"
+                    value="2025-12-31"
+                >
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button
+                id="checkButton"
+                onclick="getData()"
+            >
+                Ambil Data
+            </button>
+
+            <span
+                id="loading"
+                class="loading"
+            >
+                Mengambil data...
+            </span>
+        </div>
+
+        <div
+            id="status"
+            class="status"
+        ></div>
+    </div>
+
+    <!-- RESULT -->
+    <div
+        id="result"
+        style="display:none;"
+    >
+        <div class="card">
+            <div class="metrics">
+                <div class="metric source">
+                    <div class="metric-title">
+                        Source Total
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="sourceTotal"
+                    >
+                        -
+                    </div>
+                </div>
+
+                <div class="metric final">
+                    <div class="metric-title">
+                        Final Total
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="finalTotal"
+                    >
+                        -
+                    </div>
+                </div>
+
+                <div class="metric difference">
+                    <div class="metric-title">
+                        Selisih
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="difference"
+                    >
+                        -
+                    </div>
+                </div>
+
+                <div class="metric percentage">
+                    <div class="metric-title">
+                        Final Percentage
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="percentage"
+                    >
+                        -
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>
+                Informasi Request
+            </h3>
+
+            <p>
+                <strong>Perusahaan:</strong>
+                <span id="resultCompany"></span>
+            </p>
+
+            <p>
+                <strong>Laporan:</strong>
+                <span id="resultReport"></span>
+            </p>
+
+            <p>
+                <strong>Periode:</strong>
+                <span id="resultPeriod"></span>
+            </p>
+
+            <p>
+                <strong>Total:</strong>
+                <span id="resultTotal"></span>
+            </p>
+
+            <p>
+                <strong>Source API:</strong>
+            </p>
+
+            <div
+                id="sourceUrl"
+                class="api-url"
+            ></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+
+</body>
+</html>
