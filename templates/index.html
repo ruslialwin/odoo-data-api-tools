@@ -11,6 +11,7 @@
 
     <title>Odoo Data API Tools</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -25,6 +26,14 @@
             Monitoring sourceTotal, finalTotal,
             dan data untuk Power BI
         </p>
+        <div class="button-container">
+            <button class="history-button"
+                id="historyButton"
+                onclick="window.location.href='/history'" 
+            >
+                <i class="fas fa-history"></i> History
+            </button>
+        </div>
     </div>
 
     <!-- FILTER -->
@@ -90,7 +99,7 @@
         <div class="button-container">
             <button
                 id="checkButton"
-                onclick="getData()"
+                onclick="getData(); insertSearchHistory();"
             >
                 Ambil Data
             </button>
