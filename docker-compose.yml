@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - .:/app
     container_name: api-cleaning-tools
     ports:
       - "8502:5000"
