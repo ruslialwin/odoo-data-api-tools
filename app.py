@@ -1,8 +1,10 @@
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, render_template, request, jsonify
 import pandas as pd
 import requests
 import json
 from datetime import datetime
+import sqlite3
+import os
 
 app = Flask(__name__)
 
@@ -53,6 +55,75 @@ REPORTS = {
     }
 }
 
+# ============================================================
+# DATABASE
+# ============================================================
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+DB_PATH = os.path.join(BASE_DIR, "search_history.db")
+
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    try:
+        cursor = conn.cursor()
+        query = '''CREATE TABLE IF NOT EXISTS search_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            company TEXT NOT NULL, 
+            report TEXT NOT NULL, 
+            start_date TEXT NOT NULL, 
+            end_date TEXT NOT NULL,
+            source_total INTEGER NOT NULL,
+            final_total INTEGER NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )'''
+        cursor.execute(query)
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"Error creating table: {e}")
+        conn.close()
+        raise
+    return conn
+
+def insert_search_history(company, report, start_date, end_date, source_total, final_total):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = '''INSERT INTO search_history (company, report, start_date, end_date, source_total, final_total) 
+                   VALUES (?, ?, ?, ?, ?, ?)'''
+        cursor.execute(query, (company, report, start_date, end_date, source_total, final_total))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"Error inserting data: {e}")
+    finally:
+        if conn:
+            conn.close()
+            
+def fetch_search_history():
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = '''SELECT id, company, report, start_date, end_date, source_total, final_total, timestamp
+                   FROM search_history ORDER BY timestamp DESC'''
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        return [dict(row) for row in rows]
+    except sqlite3.Error as e:
+        print(f"Error fetching data: {e}")
+        return []
+    finally:
+        if conn:
+            conn.close()
+            
+def json_response(data, status=200):
+    # ensure non-serializable types (numpy/pandas) are stringified
+    return Response(
+        json.dumps(data, ensure_ascii=False, default=str),
+        status=status,
+        mimetype="application/json"
+    )
 
 # ============================================================
 # HELPER
@@ -142,22 +213,6 @@ def get_dataframe(url):
         result.get("data", [])
     )
 
-
-def json_response(data, status=200):
-    """
-    Helper response JSON.
-    """
-
-    return Response(
-        json.dumps(
-            data,
-            ensure_ascii=False
-        ),
-        status=status,
-        mimetype="application/json"
-    )
-
-
 # ============================================================
 # HOME / HTML
 # ============================================================
@@ -170,7 +225,35 @@ def index():
         companies=COMPANIES,
         reports=REPORTS
     )
+    
+@app.route("/history")
+def history():
 
+    history_data = fetch_search_history()
+
+    return render_template(
+        "history.html",
+        history=history_data
+    )
+    
+@app.route("/api/history", methods=["POST"])
+def add_history():
+    data = request.get_json(silent=True)
+    if not data:
+        return json_response({"success": False, "error": "Invalid JSON data"}, 400)
+    
+    company = data.get("company")
+    report = data.get("report")
+    start_date = data.get("startDate")
+    end_date = data.get("endDate")
+    source_total = data.get("sourceTotal")
+    final_total = data.get("finalTotal")
+    
+    if not (company and report and start_date and end_date):
+        return json_response({"success": False, "error": "Missing required fields"}, 400)
+    
+    insert_search_history(company, report, start_date, end_date, source_total, final_total)
+    return json_response({"success": True})
 
 # ============================================================
 # TOTALS API
@@ -708,7 +791,6 @@ def get_data_production(company):
             orient="records"
         )
     )
-
 
 # ============================================================
 # RUN
