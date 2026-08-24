@@ -101,6 +101,22 @@ button:hover {
     background: #1d4ed8;
 }
 
+.history-button {
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    background: none;
+    padding: 11px 24px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.history-button:hover {
+    background: #2563eb;
+    color: white;
+}
+
 button:disabled {
     background: #9ca3af;
     cursor: not-allowed;
