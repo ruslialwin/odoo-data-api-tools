@@ -196,6 +196,17 @@ button:disabled {
     color: #6b7280;
 }
 
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #e5e7eb;
+    padding: 8px;
+    text-align: left;
+}
+
 @media (max-width: 800px) {
 
     .form-grid {
