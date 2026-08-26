@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 import sqlite3
 import os
+from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 
@@ -86,13 +87,14 @@ def get_db_connection():
     return conn
 
 def insert_search_history(company, report, start_date, end_date, source_total, final_total):
+    timestamp = datetime.now(ZoneInfo("Asia/Jakarta")).strftime("%Y-%m-%d %H:%M:%S")
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = '''INSERT INTO search_history (company, report, start_date, end_date, source_total, final_total) 
-                   VALUES (?, ?, ?, ?, ?, ?)'''
-        cursor.execute(query, (company, report, start_date, end_date, source_total, final_total))
+        query = '''INSERT INTO search_history (company, report, start_date, end_date, source_total, final_total, timestamp)
+                   VALUES (?, ?, ?, ?, ?, ?, ?)'''
+        cursor.execute(query, (company, report, start_date, end_date, source_total, final_total, timestamp))
         conn.commit()
     except sqlite3.Error as e:
         print(f"Error inserting data: {e}")
