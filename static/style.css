@@ -112,7 +112,7 @@ button:hover {
     font-weight: 600;
 }
 
-.history-button:hover {
+.history-button:hover, th {
     background: #2563eb;
     color: white;
 }
@@ -205,6 +205,14 @@ th, td {
     border: 1px solid #e5e7eb;
     padding: 8px;
     text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #c7d2eb;
+}
+
+div.history-container {
+    overflow-x: auto;
 }
 
 @media (max-width: 800px) {

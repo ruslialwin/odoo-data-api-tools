@@ -1,8 +1,10 @@
 <html>
     <head>
         <title>Search History</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
-    <body>
+    <div class="container">
+        <body>
         <h1>Search History</h1>
         <div id="history-container">
             <table>
@@ -34,6 +36,7 @@
             </table>
         </div>
 
-    <script src="{{ url_for('static', filename='index.js') }}"></script>
-    </body>
+        <script src="{{ url_for('static', filename='index.js') }}"></script>
+        </body>
+    </div>
 </html>
