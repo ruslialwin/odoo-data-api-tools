@@ -74,8 +74,8 @@ def get_db_connection():
             report TEXT NOT NULL, 
             start_date TEXT NOT NULL, 
             end_date TEXT NOT NULL,
-            source_total INTEGER NOT NULL,
-            final_total INTEGER NOT NULL,
+            source_total TEXT NOT NULL,
+            final_total TEXT NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )'''
         cursor.execute(query)
@@ -248,8 +248,29 @@ def add_history():
     report = data.get("report")
     start_date = data.get("startDate")
     end_date = data.get("endDate")
-    source_total = data.get("sourceTotal")
-    final_total = data.get("finalTotal")
+    source_total_raw = data.get("sourceTotal")
+    final_total_raw = data.get("finalTotal")
+
+    # Normalize numeric inputs: remove thousand separators and parse to float
+    def parse_number(v):
+        if v is None:
+            return None
+        try:
+            # remove common separators (dot used as thousand sep in id locale), and spaces
+            s = str(v).replace('.', '').replace(',', '.').replace(' ', '')
+            return float(s)
+        except Exception:
+            try:
+                return float(str(v))
+            except Exception:
+                return None
+
+    st_num = parse_number(source_total_raw)
+    ft_num = parse_number(final_total_raw)
+
+    # store as strings with 3 decimal places (e.g., '7.860') to preserve trailing zeros
+    source_total = ("{:.3f}".format(st_num)) if st_num is not None else "0.000"
+    final_total = ("{:.3f}".format(ft_num)) if ft_num is not None else "0.000"
     
     if not (company and report and start_date and end_date):
         return json_response({"success": False, "error": "Missing required fields"}, 400)

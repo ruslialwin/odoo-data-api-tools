@@ -1,14 +1,13 @@
 function formatNumber(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
+    if (value === null || value === undefined) {
         return "-";
     }
 
-    return Number(value)
-        .toLocaleString("id-ID");
+    const num = Number(value);
+    if (isNaN(num)) return String(value);
+
+    // default: show thousand separators, no decimals (Indonesian style)
+    return num.toLocaleString('id-ID');
 }
 
 
