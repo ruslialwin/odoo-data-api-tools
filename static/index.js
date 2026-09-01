@@ -5,8 +5,7 @@ function formatNumber(value) {
 
     const num = Number(value);
     if (isNaN(num)) return String(value);
-
-    // default: show thousand separators, no decimals (Indonesian style)
+    
     return num.toLocaleString('id-ID');
 }
 
