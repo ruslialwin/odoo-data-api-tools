@@ -33,10 +33,11 @@
             >
                 <i class="fas fa-history"></i> History
             </button>
+            <!-- FILTER -->
+            <button id="instantButton" onclick="instantInsert()">Get All</button>
         </div>
     </div>
 
-    <!-- FILTER -->
     <div class="card">
         <div class="form-grid">
             <div class="form-group">
@@ -217,6 +218,36 @@
 </div>
 
 <script src="{{ url_for('static', filename='index.js') }}"></script>
+
+<script>
+async function instantInsert() {
+    const presets = [
+        { company: 'bimp', report: 'realisasi', start: '2025-07-01', end: '2025-12-31' },
+        { company: 'bimp', report: 'realisasi', start: '2026-01-01', end: '2026-06-30' },
+        { company: 'bimp', report: 'realisasi', start: '2026-07-01', end: '2026-12-31' },
+        { company: 'bimp', report: 'analitik', start: '2025-07-01', end: '2025-12-31' },
+        { company: 'bimp', report: 'analitik', start: '2026-01-01', end: '2026-06-30' },
+        { company: 'bimp', report: 'analitik', start: '2026-07-01', end: '2026-12-31' },
+        { company: 'bimp', report: 'realisasi-harian', start: '2025-07-01', end: '2025-12-31' },
+        { company: 'bimp', report: 'realisasi-harian', start: '2026-01-01', end: '2026-06-30' },
+        { company: 'bimp', report: 'realisasi-harian', start: '2026-07-01', end: '2026-12-31' },
+        { company: 'bimp', report: 'processing', start: '2025-07-01', end: '2025-12-31' },
+        { company: 'bimp', report: 'processing', start: '2026-01-01', end: '2026-06-30' },
+        { company: 'bimp', report: 'processing', start: '2026-07-01', end: '2026-12-31' },
+        { company: 'bimp', report: 'production', start: '2025-07-01', end: '2026-12-31' }
+    ];
+
+    for (const p of presets) {
+        document.getElementById('company').value = p.company;
+        document.getElementById('report').value = p.report;
+        document.getElementById('startDate').value = p.start;
+        document.getElementById('endDate').value = p.end;
+
+        // waits for fetch and insert
+        await getData();
+    }
+}
+</script>
 
 </body>
 </html>
