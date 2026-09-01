@@ -5,6 +5,8 @@
     </head>
     <div class="container">
         <body>
+        <!-- DataTables CSS -->
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
         <h1>Search History</h1>
         <div id="history-container">
             <table>
@@ -36,6 +38,25 @@
             </table>
         </div>
 
+        <!-- jQuery + DataTables -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                // Initialize DataTables on the history table
+                $('#history-container table').DataTable({
+                    pageLength: 10,
+                    order: [[6, 'desc']], // default sort by Timestamp (7th column, zero-based index 6)
+                    columnDefs: [
+                        { targets: [4,5], className: 'dt-body-right' },
+                    ],
+                    language: {
+                        paginate: { previous: 'Prev', next: 'Next' },
+                        emptyTable: 'No history available'
+                    }
+                });
+            });
+        </script>
         <script src="{{ url_for('static', filename='index.js') }}"></script>
         </body>
     </div>
