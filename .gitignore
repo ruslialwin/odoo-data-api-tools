@@ -3,3 +3,6 @@
 
 # SQLite database
 *.db
+
+# virtual environment
+venv/
